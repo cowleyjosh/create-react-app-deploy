@@ -1,56 +1,49 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
-import './App.css';
+import React, {useEffect, useState} from "react";
+import axios from 'axios';
+import styled from 'styled-components';
+import Title from './components/Title';
+import Img from './components/Img';
+import Info from './components/Info';
+
+import Date from './components/Date';
+
+
+const WrapperDiv = styled.div`
+  text-align: center;
+  `;
+
+const HeaderDiv = styled.div`
+display: flex;
+max-width: 100%;
+justify-content: center;
+`;
 
 function App() {
-  const [date, setDate] = useState(null);
+
+  const [NasaImg, setNasaImg] = useState();
+  const [NasaTitle, setNasaTitle] = useState();
+  const [NasaInfo, setNasaInfo] = useState();
+  const [NasaDate, setNasaDate] = useState();
+
   useEffect(() => {
-    async function getDate() {
-      const res = await fetch('/api/date');
-      const newDate = await res.text();
-      setDate(newDate);
-    }
-    getDate();
+    axios.get('https://api.nasa.gov/planetary/apod?api_key=AihqFJc1iiZypubOyqpbR2aLyhMXoFMMjpPQ588b')
+      .then( res => {
+        setNasaImg(res.data.url);
+        setNasaTitle(res.data.title);
+        setNasaInfo(res.data.explanation);
+        setNasaDate(res.data.date)
+      });
   }, []);
+
   return (
-    <main>
-      <h1>Create React App + Go API</h1>
-      <h2>
-        Deployed with{' '}
-        <a
-          href="https://zeit.co/docs"
-          target="_blank"
-          rel="noreferrer noopener"
-        >
-          ZEIT Now
-        </a>
-        !
-      </h2>
-      <p>
-        <a
-          href="https://github.com/zeit/now-examples/tree/master/create-react-app-functions"
-          target="_blank"
-          rel="noreferrer noopener"
-        >
-          This project
-        </a>{' '}
-        was bootstrapped with{' '}
-        <a href="https://facebook.github.io/create-react-app/">
-          Create React App
-        </a>{' '}
-        and contains three directories, <code>/public</code> for static assets,{' '}
-        <code>/src</code> for components and content, and <code>/api</code>{' '}
-        which contains a serverless <a href="https://golang.org/">Go</a>{' '}
-        function. See{' '}
-        <a href="/api/date">
-          <code>api/date</code> for the Date API with Go
-        </a>
-        .
-      </p>
-      <br />
-      <h2>The date according to Go is:</h2>
-      <p>{date ? date : 'Loading date...'}</p>
-    </main>
+    <WrapperDiv>
+      <HeaderDiv>
+         <Title title={NasaTitle} />
+      </HeaderDiv>
+      <Img src={NasaImg} />
+      <Date date={NasaDate} />
+      <Info info={NasaInfo}/>
+      </WrapperDiv>
   );
 }
 
